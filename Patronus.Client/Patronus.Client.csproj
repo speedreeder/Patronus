@@ -1,8 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
@@ -10,7 +9,22 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" PrivateAssets="all" />
 		<PackageReference Include="MudBlazor" Version="6.0.9" />
+		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
 	</ItemGroup>
+
+	<!--
+	The API project would be better as a Nuget package, published to a self-hosted repository.
+	For the purposes of this work, it's fine as a project reference.
+
+	If your frontend needed to access multiple APIs, they would each be imported as separate nuget packages.
+		- Patronus.UsersApi
+		- Patronus.ContractsApi
+		- Patronus.FilesApi
+		- Etc.
+		
+	This allows you to deploy each of those as separate services/sites, which means they can be updated separately.
+	No need to bring down all of them to update one of them.
+	-->
 	
 	
 </Project>

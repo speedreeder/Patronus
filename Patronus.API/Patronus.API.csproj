@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
+  </ItemGroup>
+
+	<!--
+	The DAL project would be better as a Nuget package, published to a self-hosted repository.
+	For the purposes of this work, it's fine as a project reference.
+	-->
+  <ItemGroup>
+    <ProjectReference Include="..\Patronus.DAL\Patronus.DAL.csproj" />
+  </ItemGroup>
+
+</Project>

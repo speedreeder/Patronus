@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patronus.Client", "Patronus.Client\Patronus.Client.csproj", "{F16755ED-D5E4-4516-BCDE-AAE2DA231DAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.Client", "Patronus.Client\Patronus.Client.csproj", "{F16755ED-D5E4-4516-BCDE-AAE2DA231DAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patronus.Server", "Patronus.Server\Patronus.Server.csproj", "{92D23906-CBED-45C3-918A-5C47A7C0B6D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.API", "Patronus.API\Patronus.API.csproj", "{92D23906-CBED-45C3-918A-5C47A7C0B6D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patronus.DAL", "Patronus.DAL\Patronus.DAL.csproj", "{F0A8C256-1AE3-49C4-800D-A59E8C1F72F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.DAL", "Patronus.DAL\Patronus.DAL.csproj", "{F0A8C256-1AE3-49C4-800D-A59E8C1F72F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.API.Test", "Patronus.API.Test\Patronus.API.Test.csproj", "{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patronus.API.Client", "Patronus.API.Client\Patronus.API.Client.csproj", "{BAE93365-ABE2-47F4-A037-2A275A977945}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{F0A8C256-1AE3-49C4-800D-A59E8C1F72F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0A8C256-1AE3-49C4-800D-A59E8C1F72F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0A8C256-1AE3-49C4-800D-A59E8C1F72F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAE93365-ABE2-47F4-A037-2A275A977945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAE93365-ABE2-47F4-A037-2A275A977945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAE93365-ABE2-47F4-A037-2A275A977945}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAE93365-ABE2-47F4-A037-2A275A977945}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
