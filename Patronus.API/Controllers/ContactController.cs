@@ -16,17 +16,6 @@ namespace Patronus.API.Controllers
             _contactService = contactService;
         }
 
-        [HttpGet("{contactId}")]
-        public async Task<ActionResult<PagedSearchResult<ContactDto>>> GetContactAsync(int contactId)
-        {
-            var contacts = await _contactService.SearchContactsAsync(new ContactSearchDto
-            {
-                ContactId = contactId
-            });
-
-            return Ok(contacts);
-        }
-
         [HttpGet("search")]
         public async Task<ActionResult<PagedSearchResult<ContactDto>>> GetContactsAsync(ContactSearchDto search)
         {
@@ -40,9 +29,9 @@ namespace Patronus.API.Controllers
         {
             var result = await _contactService.CreateContactAsync(contactDto);
 
-            if(!string.IsNullOrWhiteSpace(result.Message))
+            if(result.Messages.Any())
             {
-                return BadRequest(result.Message);
+                return BadRequest(string.Join("; ", result.Messages));
             }
 
             return Ok(result.ContactResult);
@@ -53,9 +42,9 @@ namespace Patronus.API.Controllers
         {
             var result = await _contactService.UpdateContactAsync(contactDto);
 
-            if (!string.IsNullOrWhiteSpace(result.Message))
+            if (result.Messages.Any())
             {
-                return BadRequest(result.Message);
+                return BadRequest(string.Join("; ", result.Messages));
             }
 
             return Ok(result.ContactResult);

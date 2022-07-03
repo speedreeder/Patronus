@@ -1,3 +1,7 @@
+using Patronus.DAL;
+using Microsoft.EntityFrameworkCore;
+using Patronus.API.Services;
+
 namespace Patronus.Server
 {
     public class Program
@@ -7,24 +11,36 @@ namespace Patronus.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<PatronusContext>(options =>
+             options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=PatronusContext;Trusted_Connection=True;MultipleActiveResultSets=true"));
+
+
+            builder.Services.AddScoped<IContactService, ContactService>();
+            //builder.Services.Scan(scan => scan
+            //    .FromCallingAssembly()
+            //    .AddClasses(true)
+            //    .AsImplementedInterfaces()
+            //    .WithScopedLifetime()
+            //);
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.Run();
         }

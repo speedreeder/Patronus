@@ -9,12 +9,12 @@ namespace Patronus.API.Services
 {
     public interface IContactService
     {
-        Task<(ContactDto ContactResult, string Message)> CreateContactAsync(ContactDto contactDto);
+        Task<(ContactDto ContactResult, List<string> Messages)> CreateContactAsync(ContactDto contactDto);
         Task<string> DeleteContactAsync(int contactId);
         Contact DtoToEntity(ContactDto dto);
         ContactDto EntityToDto(Contact entity);
         Task<PagedSearchResult<ContactDto>> SearchContactsAsync(ContactSearchDto searchDto);
-        Task<(ContactDto ContactResult, string Message)> UpdateContactAsync(ContactDto contactDto);
+        Task<(ContactDto ContactResult, List<string> Messages)> UpdateContactAsync(ContactDto contactDto);
     }
 
     public class ContactService : IContactService
@@ -27,13 +27,13 @@ namespace Patronus.API.Services
         }
 
 
-        public async Task<(ContactDto ContactResult, string Message)> CreateContactAsync(ContactDto contactDto)
+        public async Task<(ContactDto ContactResult, List<string> Messages)> CreateContactAsync(ContactDto contactDto)
         {
-            var validationMessage = ValidateContact(contactDto);
+            var validationMessages = ValidateContact(contactDto);
 
-            if (!string.IsNullOrEmpty(validationMessage))
+            if (validationMessages.Any())
             {
-                return (null, validationMessage);
+                return (null, validationMessages);
             }
 
             var entity = DtoToEntity(contactDto);
@@ -41,16 +41,16 @@ namespace Patronus.API.Services
             await _patronusContext.Contacts.AddAsync(entity);
             await _patronusContext.SaveChangesAsync();
 
-            return (EntityToDto(entity), string.Empty);
+            return (EntityToDto(entity), validationMessages);
         }
 
-        public async Task<(ContactDto ContactResult, string Message)> UpdateContactAsync(ContactDto contactDto)
+        public async Task<(ContactDto ContactResult, List<string> Messages)> UpdateContactAsync(ContactDto contactDto)
         {
-            var validationMessage = ValidateContact(contactDto);
+            var validationMessages = ValidateContact(contactDto);
 
-            if (!string.IsNullOrEmpty(validationMessage))
+            if (validationMessages.Any())
             {
-                return (null, validationMessage);
+                return (null, validationMessages);
             }
 
             var entity = DtoToEntity(contactDto);
@@ -59,7 +59,7 @@ namespace Patronus.API.Services
             _patronusContext.Contacts.Update(entity);
             await _patronusContext.SaveChangesAsync();
 
-            return (EntityToDto(entity), string.Empty);
+            return (EntityToDto(entity), validationMessages);
         }
 
         public async Task<string> DeleteContactAsync(int contactId)
@@ -102,12 +102,13 @@ namespace Patronus.API.Services
             return await query.PageAndConvertAsync(searchDto, EntityToDto);
         }
 
-        private string ValidateContact(ContactDto contactDto)
+        private List<string> ValidateContact(ContactDto contactDto)
         {
+            var errorMessages = new List<string>();
             if (!string.IsNullOrWhiteSpace(contactDto.Phone))
             {
                 //source: https://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
-                return Regex.IsMatch(contactDto.Phone, @"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$") ? string.Empty : $"Phone number {contactDto.Phone} is not properly formatted.";
+                if (!Regex.IsMatch(contactDto.Phone, @"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$")) errorMessages.Add($"Phone number {contactDto.Phone} is not properly formatted.");
             }
 
             if (!string.IsNullOrWhiteSpace(contactDto.Email))
@@ -119,16 +120,16 @@ namespace Patronus.API.Services
                 }
                 catch (FormatException)
                 {
-                    return $"Email address {contactDto.Email} is not properly formatted.";
+                    errorMessages.Add($"Email address {contactDto.Email} is not properly formatted.");
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(contactDto.Name))
+            if (string.IsNullOrWhiteSpace(contactDto.Name))
             {
-                return "Name is required.";
+                errorMessages.Add("Name is required.");
             }
 
-            return string.Empty;
+            return errorMessages;
         }
 
 
@@ -143,7 +144,14 @@ namespace Patronus.API.Services
                 Email = entity.Email,
                 Name = entity.Name,
                 Phone = entity.Phone,
-                //Address = entity.
+                Address = new AddressDto
+                {
+                    Line1 = entity.Address.Line1,
+                    Line2 = entity.Address.Line2,
+                    City = entity.Address.City,
+                    State = entity.Address.State,
+                    ZipCode = entity.Address.ZipCode
+                }
             };
         }
 
@@ -153,7 +161,15 @@ namespace Patronus.API.Services
             {
                 Email = dto.Email,
                 Name = dto.Name,
-                Phone = dto.Phone
+                Phone = dto.Phone,
+                Address = new Address
+                {
+                    Line1 = dto.Address.Line1,
+                    Line2 = dto.Address.Line2,
+                    City = dto.Address.City,
+                    State = dto.Address.State,
+                    ZipCode = dto.Address.ZipCode
+                }
             };
         }
     }

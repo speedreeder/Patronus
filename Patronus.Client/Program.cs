@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-//using Patronus.API;
+using Patronus.API.Client;
 using Patronus.Client;
 using Refit;
 
@@ -11,6 +11,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMudServices();
-//builder.Services.AddRefitClient<IPatronusApiClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://api.github.com")); ;
+builder.Services.AddRefitClient<IPatronusApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7064")); ;
 
 await builder.Build().RunAsync();
