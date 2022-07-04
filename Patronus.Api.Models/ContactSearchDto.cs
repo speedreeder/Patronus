@@ -1,6 +1,4 @@
-﻿using Patronus.API.Utils.Paging;
-
-namespace Patronus.API.DTOs
+﻿namespace Patronus.Api.Models
 {
     public class ContactSearchDto : PagingModel
     {

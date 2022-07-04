@@ -1,8 +1,8 @@
-﻿namespace Patronus.DAL.Entities
+﻿namespace Patronus.Api.Models
 {
-    public class Contact
+    public class ContactDto
     {
-        public int ContactId { get; set; }
+        public int? ContactId { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }

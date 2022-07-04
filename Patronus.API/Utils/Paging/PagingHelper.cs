@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Patronus.Api.Models;
 
 namespace Patronus.API.Utils.Paging
 {

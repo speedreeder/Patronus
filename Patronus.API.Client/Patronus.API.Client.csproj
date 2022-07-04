@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFrameworks>net6.0</TargetFrameworks>
 	<ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.3</Version>
+    <Version>1.1.2</Version>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Patronus.API\Patronus.API.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Patronus.Api.Models\Patronus.Api.Models.csproj" PrivateAssets="all" />
   </ItemGroup>
 
 	<Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">

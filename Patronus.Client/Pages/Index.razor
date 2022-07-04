@@ -1,7 +1,66 @@
 ﻿@page "/"
+@using Patronus.API.Client
+@using Patronus.Api.Models
+@using Refit
+@inject IPatronusApi patronusApi
+@inject IDialogService DialogService
 
 <PageTitle>Index</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
-<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink></MudAlert>
+
+<MudTable Items="@Contacts" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" OnRowClick="RowClickEvent" LoadingProgressColor="Color.Info" T="ContactDto">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Phone</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Phone">@context.Phone</MudTd>
+    </RowTemplate>
+</MudTable>
+<MudButton Variant="Variant.Filled">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary">Add Contact</MudButton>
+
+@code {
+    private bool _loading;
+    private List<ContactDto> Contacts = new List<ContactDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContacts();
+    }
+
+    async Task RowClickEvent(TableRowClickEventArgs<ContactDto> tableRowClickEventArgs)
+    {
+        var parameters = new DialogParameters { ["contact"]=tableRowClickEventArgs.Item };
+
+        var dialog = DialogService.Show<Dialog>("Contact", parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await LoadContacts();
+        }
+    }
+
+    async Task LoadContacts()
+    {
+        try
+        {
+            _loading = true;
+            var result = await patronusApi.GetContactsAsync(new ContactSearchDto());
+            Contacts = result.Data;
+
+            _loading = false;
+        } 
+        catch(ApiException e)
+        {
+            _loading = false;
+        }
+    }
+
+}

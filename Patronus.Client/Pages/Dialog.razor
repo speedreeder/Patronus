@@ -1,0 +1,105 @@
+﻿@using Patronus.API.Client
+@using Patronus.Api.Models
+@using Patronus.Api.Models.Validators
+@using Refit
+@using FluentValidation
+
+@inject IPatronusApi patronusApi
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Filled.ContactPage" Class="mr-3 mb-n1"/>
+            Edit Contact
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@contact" @ref="@form" Validation="@(contactValidator.ValidateValue)" ValidationDelay="0">
+				<MudTextField @bind-Value="contact.Name"                              
+							  For="@(() => contact.Name)"
+							  Immediate="true"
+							  Label="Name" />
+
+				<MudTextField @bind-Value="contact.Email"
+							  For="@(() => contact.Email)"
+							  Immediate="true"
+							  Label="Email" />
+
+				<MudTextField @bind-Value="contact.Phone"
+							  For="@(() => contact.Phone)"
+							  Immediate="true"
+							  Label="Phone" />
+
+				<MudTextField @bind-Value="contact.Line1"
+							  For="@(() => contact.Line1)"
+							  Immediate="true"
+							  Label="Address Line 1" />
+
+                <MudTextField @bind-Value="contact.Line2"
+				            For="@(() => contact.Line2)"
+				            Immediate="true"
+				            Label="Address Line 2" />
+
+				<MudTextField @bind-Value="contact.City"
+							  For="@(() => contact.City)"
+							  Immediate="true"
+							  Label="City" />
+
+				<MudTextField @bind-Value="contact.State"
+							  For="@(() => contact.State)"
+							  Immediate="true"
+							  Label="State" />
+
+                              <MudTextField @bind-Value="contact.ZipCode"
+							  For="@(() => contact.ZipCode)"
+							  Immediate="true"
+							  Label="Zip code" />
+	    </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="SaveContact">Save</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteContact">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public ContactDto contact { get; set; }
+    MudForm form;
+    ContactDtoValidator contactValidator = new ContactDtoValidator();
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    async void DeleteContact()
+    {
+        try
+        {
+            await patronusApi.DeleteContactAsync(contact.ContactId.Value);
+        } 
+        catch (ApiException)
+        {
+            Snackbar.Add($"Delete failed", MudBlazor.Severity.Error);
+        }
+
+        Snackbar.Add($"{contact.Name} deleted", MudBlazor.Severity.Success);
+        MudDialog.Close();
+    }
+
+    async void SaveContact()
+    {
+        try
+        {
+            await patronusApi.UpdateContactAsync(contact);
+        } 
+        catch (ApiException)
+        {
+            Snackbar.Add($"Save failed", MudBlazor.Severity.Error);
+        }
+
+        Snackbar.Add($"{contact.Name} saved", MudBlazor.Severity.Success);
+    }
+}

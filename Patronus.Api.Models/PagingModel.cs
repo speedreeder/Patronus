@@ -1,4 +1,4 @@
-﻿namespace Patronus.API.Utils.Paging
+﻿namespace Patronus.Api.Models
 {
     public class PagingModel
     {

@@ -1,4 +1,7 @@
-﻿using Patronus.API.DTOs;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
+using Patronus.Api.Models;
 using Patronus.API.Utils.Paging;
 using Patronus.DAL;
 using Patronus.DAL.Entities;
@@ -9,31 +12,33 @@ namespace Patronus.API.Services
 {
     public interface IContactService
     {
-        Task<(ContactDto ContactResult, List<string> Messages)> CreateContactAsync(ContactDto contactDto);
+        Task<(ContactDto ContactResult, List<ValidationFailure> Messages)> CreateContactAsync(ContactDto contactDto);
         Task<string> DeleteContactAsync(int contactId);
         Contact DtoToEntity(ContactDto dto);
         ContactDto EntityToDto(Contact entity);
         Task<PagedSearchResult<ContactDto>> SearchContactsAsync(ContactSearchDto searchDto);
-        Task<(ContactDto ContactResult, List<string> Messages)> UpdateContactAsync(ContactDto contactDto);
+        Task<(ContactDto ContactResult, List<ValidationFailure> Messages)> UpdateContactAsync(ContactDto contactDto);
     }
 
     public class ContactService : IContactService
     {
         private readonly PatronusContext _patronusContext;
+        private readonly IValidator<ContactDto> _validator;
 
-        public ContactService(PatronusContext patronusContext)
+        public ContactService(PatronusContext patronusContext, IValidator<ContactDto> validator)
         {
             _patronusContext = patronusContext;
+            _validator = validator;
         }
 
 
-        public async Task<(ContactDto ContactResult, List<string> Messages)> CreateContactAsync(ContactDto contactDto)
+        public async Task<(ContactDto ContactResult, List<ValidationFailure> Messages)> CreateContactAsync(ContactDto contactDto)
         {
-            var validationMessages = ValidateContact(contactDto);
+            var validationResult = _validator.Validate(contactDto);
 
-            if (validationMessages.Any())
+            if (!validationResult.IsValid)
             {
-                return (null, validationMessages);
+                return (null, validationResult.Errors);
             }
 
             var entity = DtoToEntity(contactDto);
@@ -41,25 +46,38 @@ namespace Patronus.API.Services
             await _patronusContext.Contacts.AddAsync(entity);
             await _patronusContext.SaveChangesAsync();
 
-            return (EntityToDto(entity), validationMessages);
+            return (EntityToDto(entity), null);
         }
 
-        public async Task<(ContactDto ContactResult, List<string> Messages)> UpdateContactAsync(ContactDto contactDto)
+        public async Task<(ContactDto ContactResult, List<ValidationFailure> Messages)> UpdateContactAsync(ContactDto contactDto)
         {
-            var validationMessages = ValidateContact(contactDto);
+            var validationResult = _validator.Validate(contactDto);
 
-            if (validationMessages.Any())
+            if (!validationResult.IsValid)
             {
-                return (null, validationMessages);
+                return (null, validationResult.Errors);
             }
 
-            var entity = DtoToEntity(contactDto);
+            var entity = await _patronusContext.Contacts.FindAsync(contactDto.ContactId);
 
-            // TODO: Catch not exists by Id
-            _patronusContext.Contacts.Update(entity);
+            if (entity == null)
+            {
+                validationResult.Errors.Add(new ValidationFailure("ContactId", $"No Contact found with {contactDto.ContactId}", contactDto.ContactId));
+                return (null, validationResult.Errors);
+            }
+
+            entity.Phone = contactDto.Phone;
+            entity.Email = contactDto.Email;
+            entity.Name = contactDto.Name;
+            entity.Line1 = contactDto.Line1;
+            entity.Line2 = contactDto.Line2;
+            entity.City = contactDto.City;
+            entity.State = contactDto.State;
+            entity.ZipCode = contactDto.ZipCode;
+
             await _patronusContext.SaveChangesAsync();
 
-            return (EntityToDto(entity), validationMessages);
+            return (EntityToDto(entity), null);
         }
 
         public async Task<string> DeleteContactAsync(int contactId)
@@ -81,25 +99,29 @@ namespace Patronus.API.Services
 
             if (searchDto.ContactId.HasValue)
             {
-                query.Where(c => c.ContactId == searchDto.ContactId);
+                query = query.Where(c => c.ContactId == searchDto.ContactId);
             }
 
             if (!string.IsNullOrEmpty(searchDto.Email))
             {
-                query.Where(c => c.Email == searchDto.Email);
+                query = query.Where(c => c.Email == searchDto.Email);
             }
 
             if (!string.IsNullOrEmpty(searchDto.PhoneNumber))
             {
-                query.Where(c => c.Phone == searchDto.PhoneNumber);
+                query = query.Where(c => c.Phone == searchDto.PhoneNumber);
             }
 
             if (!string.IsNullOrEmpty(searchDto.Name))
             {
-                query.Where(c => c.Name == searchDto.Name);
+                query = query.Where(c => c.Name == searchDto.Name);
             }
 
-            return await query.PageAndConvertAsync(searchDto, EntityToDto);
+            var x = query.ToList();
+
+            var results = await query.PageAndConvertAsync(searchDto, EntityToDto);
+
+            return results;
         }
 
         private List<string> ValidateContact(ContactDto contactDto)
@@ -144,14 +166,11 @@ namespace Patronus.API.Services
                 Email = entity.Email,
                 Name = entity.Name,
                 Phone = entity.Phone,
-                Address = new AddressDto
-                {
-                    Line1 = entity.Address.Line1,
-                    Line2 = entity.Address.Line2,
-                    City = entity.Address.City,
-                    State = entity.Address.State,
-                    ZipCode = entity.Address.ZipCode
-                }
+                Line1 = entity.Line1,
+                Line2 = entity.Line2,
+                City = entity.City,
+                State = entity.State,
+                ZipCode = entity.ZipCode
             };
         }
 
@@ -162,14 +181,11 @@ namespace Patronus.API.Services
                 Email = dto.Email,
                 Name = dto.Name,
                 Phone = dto.Phone,
-                Address = new Address
-                {
-                    Line1 = dto.Address.Line1,
-                    Line2 = dto.Address.Line2,
-                    City = dto.Address.City,
-                    State = dto.Address.State,
-                    ZipCode = dto.Address.ZipCode
-                }
+                Line1 = dto.Line1,
+                Line2 = dto.Line2,
+                City = dto.City,
+                State = dto.State,
+                ZipCode = dto.ZipCode
             };
         }
     }

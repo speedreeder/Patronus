@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.DAL", "Patronus.DA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.API.Test", "Patronus.API.Test\Patronus.API.Test.csproj", "{50B28CEA-9BC9-40C6-BA59-BF42A7368F7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patronus.API.Client", "Patronus.API.Client\Patronus.API.Client.csproj", "{BAE93365-ABE2-47F4-A037-2A275A977945}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.API.Client", "Patronus.API.Client\Patronus.API.Client.csproj", "{BAE93365-ABE2-47F4-A037-2A275A977945}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patronus.Api.Models", "Patronus.Api.Models\Patronus.Api.Models.csproj", "{E952BA90-E520-4547-883D-E384D439BAA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BAE93365-ABE2-47F4-A037-2A275A977945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAE93365-ABE2-47F4-A037-2A275A977945}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAE93365-ABE2-47F4-A037-2A275A977945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E952BA90-E520-4547-883D-E384D439BAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E952BA90-E520-4547-883D-E384D439BAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E952BA90-E520-4547-883D-E384D439BAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E952BA90-E520-4547-883D-E384D439BAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

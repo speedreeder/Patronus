@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Patronus.DAL;
 
@@ -18,7 +19,12 @@ namespace Patronus.API.Test
 
             private static IFixture GetFixture()
             {
-                return new Fixture().Customize(new TestCustomization());
+                //return new Fixture().Customize(new TestCustomization());
+
+                var fixture = new Fixture().Customize(new TestCustomization());
+                fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
+
+                return fixture;
             }
         }
 

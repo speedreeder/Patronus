@@ -3,29 +3,32 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.2.5" />
 		<PackageReference Include="MudBlazor" Version="6.0.9" />
-		<PackageReference Include="Patronus.API.Client" Version="1.0.3" />
 		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+
+		<!--
+		The API project works well as a Nuget package, published to a self-hosted repository.
+
+		If your frontend needed to access multiple APIs, they would each be imported as separate nuget packages.
+			- Patronus.UsersApi
+			- Patronus.ContractsApi
+			- Patronus.FilesApi
+			- Etc.
+		
+		This allows you to deploy each of those as separate services/sites, which means they can be updated separately.
+		No need to bring down all of them to update one of them.
+		-->
+		<PackageReference Include="Patronus.API.Client" Version="1.1.2" />
 	</ItemGroup>
 
-	<!--
-	The API project would be better as a Nuget package, published to a self-hosted repository.
-	For the purposes of this work, it's fine as a project reference.
 
-	If your frontend needed to access multiple APIs, they would each be imported as separate nuget packages.
-		- Patronus.UsersApi
-		- Patronus.ContractsApi
-		- Patronus.FilesApi
-		- Etc.
-		
-	This allows you to deploy each of those as separate services/sites, which means they can be updated separately.
-	No need to bring down all of them to update one of them.
-	-->
-	
 	
 </Project>

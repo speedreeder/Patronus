@@ -1,6 +1,8 @@
 using Patronus.DAL;
 using Microsoft.EntityFrameworkCore;
 using Patronus.API.Services;
+using FluentValidation.AspNetCore;
+using Patronus.Api.Models.Validators;
 
 namespace Patronus.Server
 {
@@ -20,13 +22,18 @@ namespace Patronus.Server
 
 
             builder.Services.AddScoped<IContactService, ContactService>();
-            //builder.Services.Scan(scan => scan
-            //    .FromCallingAssembly()
-            //    .AddClasses(true)
-            //    .AsImplementedInterfaces()
-            //    .WithScopedLifetime()
-            //);
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddFluentValidation(s =>
+            {
+                s.RegisterValidatorsFromAssemblyContaining<ContactDtoValidator>();
+            });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader());
+            });
 
             var app = builder.Build();
 
@@ -35,12 +42,25 @@ namespace Patronus.Server
 
             app.UseHttpsRedirection();
 
-            //app.UseAuthorization();
             app.UseRouting();
+            app.UseCors();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                var context = services.GetRequiredService<PatronusContext>();
+                var created = context.Database.EnsureCreated();
+                if (created)
+                {
+                    DbInitializer.Initialize(context);
+                }
+            }
 
             app.Run();
         }

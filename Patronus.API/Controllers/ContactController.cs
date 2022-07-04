@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Patronus.API.DTOs;
+using Patronus.Api.Models;
 using Patronus.API.Services;
-using Patronus.API.Utils.Paging;
 
 namespace Patronus.API.Controllers
 {
@@ -17,7 +16,7 @@ namespace Patronus.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<PagedSearchResult<ContactDto>>> GetContactsAsync(ContactSearchDto search)
+        public async Task<ActionResult<PagedSearchResult<ContactDto>>> GetContactsAsync([FromQuery]ContactSearchDto search)
         {
             var contacts = await _contactService.SearchContactsAsync(search);
 
@@ -31,7 +30,7 @@ namespace Patronus.API.Controllers
 
             if(result.Messages.Any())
             {
-                return BadRequest(string.Join("; ", result.Messages));
+                return BadRequest(string.Join("; ", result.Messages.Select(m => m.ErrorMessage)));
             }
 
             return Ok(result.ContactResult);
@@ -40,18 +39,23 @@ namespace Patronus.API.Controllers
         [HttpPut]
         public async Task<ActionResult<PagedSearchResult<ContactDto>>> UpdateContactAsync(ContactDto contactDto)
         {
+            if (!contactDto.ContactId.HasValue || contactDto.ContactId == 0)
+            {
+                return BadRequest("ContactId cannot be null or 0.");
+            }
+
             var result = await _contactService.UpdateContactAsync(contactDto);
 
             if (result.Messages.Any())
             {
-                return BadRequest(string.Join("; ", result.Messages));
+                return BadRequest(string.Join("; ", result.Messages.Select(m => m.ErrorMessage)));
             }
 
             return Ok(result.ContactResult);
         }
 
-        [HttpDelete("{contactId}")]
-        public async Task<ActionResult<PagedSearchResult<ContactDto>>> UpdateContactAsync(int contactId)
+        [HttpDelete("{contactId:int}")]
+        public async Task<ActionResult<PagedSearchResult<ContactDto>>> DeleteContactAsync(int contactId)
         {
             var result = await _contactService.DeleteContactAsync(contactId);
 
