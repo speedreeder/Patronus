@@ -60,7 +60,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Success" OnClick="SaveContact">Save</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteContact">Delete</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteContact" Disabled="@(!contact.ContactId.HasValue)">Delete</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
@@ -79,27 +79,38 @@
         try
         {
             await patronusApi.DeleteContactAsync(contact.ContactId.Value);
+            Snackbar.Add($"{contact.Name} deleted", MudBlazor.Severity.Success);
+            MudDialog.Close();
         } 
         catch (ApiException)
         {
-            Snackbar.Add($"Delete failed", MudBlazor.Severity.Error);
+            Snackbar.Add("Delete failed", MudBlazor.Severity.Error);
         }
-
-        Snackbar.Add($"{contact.Name} deleted", MudBlazor.Severity.Success);
-        MudDialog.Close();
     }
 
     async void SaveContact()
     {
-        try
-        {
-            await patronusApi.UpdateContactAsync(contact);
-        } 
-        catch (ApiException)
-        {
-            Snackbar.Add($"Save failed", MudBlazor.Severity.Error);
-        }
+        await form.Validate();
 
-        Snackbar.Add($"{contact.Name} saved", MudBlazor.Severity.Success);
+        if (form.IsValid)
+        {
+            try
+            {
+                if (contact.ContactId.HasValue)
+                {
+                    await patronusApi.UpdateContactAsync(contact);
+                }
+                else
+                {
+                    await patronusApi.CreateContactAsync(contact);
+                }
+                Snackbar.Add($"{contact.Name} saved", MudBlazor.Severity.Success);
+                MudDialog.Close();
+            }
+            catch (ApiException)
+            {
+                Snackbar.Add("Save failed", MudBlazor.Severity.Error);
+            }
+        }
     }
 }

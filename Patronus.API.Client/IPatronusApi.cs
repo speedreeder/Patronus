@@ -15,6 +15,6 @@ namespace Patronus.API.Client
         Task<PagedSearchResult<ContactDto>> UpdateContactAsync([Body] ContactDto contactDto);
 
         [Delete("/api/contact/{contactId}")]
-        Task<PagedSearchResult<ContactDto>> DeleteContactAsync(int contactId);
+        Task<string> DeleteContactAsync(int contactId);
     }
 }

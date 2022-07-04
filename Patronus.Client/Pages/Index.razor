@@ -5,11 +5,25 @@
 @inject IPatronusApi patronusApi
 @inject IDialogService DialogService
 
-<PageTitle>Index</PageTitle>
+<style>
+    .mud-table-body .mud-table-row {
+        cursor: pointer
+    }
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
+    .mud-table-row-disabled {
+        cursor: wait !important;
+        background-color: darkgray !important;
+    }
+</style>
 
-<MudTable Items="@Contacts" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" OnRowClick="RowClickEvent" LoadingProgressColor="Color.Info" T="ContactDto">
+<PageTitle>Contacts</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Contacts</MudText>
+
+<MudTable Items="@Contacts" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" OnRowClick="RowClickEvent" LoadingProgressColor="Color.Info" T="ContactDto" RowClassFunc="DisableWhileLoading">
+    <LoadingContent>
+        <MudText Typo="Typo.body2" Class="mt-4 mud-text-secondary">Loading Data...</MudText>
+    </LoadingContent>
     <HeaderContent>
         <MudTh>Name</MudTh>
         <MudTh>Email</MudTh>
@@ -21,11 +35,11 @@
         <MudTd DataLabel="Phone">@context.Phone</MudTd>
     </RowTemplate>
 </MudTable>
-<MudButton Variant="Variant.Filled">Refresh</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary">Add Contact</MudButton>
+<MudButton Variant="Variant.Filled" OnClick="LoadContacts">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddContact">Add Contact</MudButton>
 
 @code {
-    private bool _loading;
+    public bool _loading;
     private List<ContactDto> Contacts = new List<ContactDto>();
 
     protected override async Task OnInitializedAsync()
@@ -33,34 +47,57 @@
         await LoadContacts();
     }
 
+    string DisableWhileLoading(ContactDto contact, int index)
+    {
+        if (_loading)
+        {
+            return "mud-table-row-disabled";
+        }
+
+        return "";
+    }
+
     async Task RowClickEvent(TableRowClickEventArgs<ContactDto> tableRowClickEventArgs)
     {
-        var parameters = new DialogParameters { ["contact"]=tableRowClickEventArgs.Item };
+        if (_loading) return;
 
+        _loading = true;
+        var parameters = new DialogParameters { ["contact"] = tableRowClickEventArgs.Item };
         var dialog = DialogService.Show<Dialog>("Contact", parameters);
-
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
-        {
-            await LoadContacts();
-        }
+        await LoadContacts();
+        _loading = false;
     }
 
     async Task LoadContacts()
     {
+        _loading = true;
+
         try
         {
-            _loading = true;
             var result = await patronusApi.GetContactsAsync(new ContactSearchDto());
             Contacts = result.Data;
 
+            await Task.Delay(1500);
             _loading = false;
         } 
-        catch(ApiException e)
+        catch(ApiException)
         {
             _loading = false;
         }
+    }
+
+    async Task AddContact()
+    {
+        _loading = true;
+
+        var parameters = new DialogParameters { ["contact"] = new ContactDto() };
+        var dialog = DialogService.Show<Dialog>("Contact", parameters);
+        var result = await dialog.Result;
+
+        await LoadContacts();
+        _loading = false;
     }
 
 }

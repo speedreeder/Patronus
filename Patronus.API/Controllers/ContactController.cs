@@ -28,7 +28,7 @@ namespace Patronus.API.Controllers
         {
             var result = await _contactService.CreateContactAsync(contactDto);
 
-            if(result.Messages.Any())
+            if(result.Messages != null && result.Messages.Any())
             {
                 return BadRequest(string.Join("; ", result.Messages.Select(m => m.ErrorMessage)));
             }
@@ -46,7 +46,7 @@ namespace Patronus.API.Controllers
 
             var result = await _contactService.UpdateContactAsync(contactDto);
 
-            if (result.Messages.Any())
+            if (result.Messages != null && result.Messages.Any())
             {
                 return BadRequest(string.Join("; ", result.Messages.Select(m => m.ErrorMessage)));
             }
@@ -55,7 +55,7 @@ namespace Patronus.API.Controllers
         }
 
         [HttpDelete("{contactId:int}")]
-        public async Task<ActionResult<PagedSearchResult<ContactDto>>> DeleteContactAsync(int contactId)
+        public async Task<ActionResult<string>> DeleteContactAsync(int contactId)
         {
             var result = await _contactService.DeleteContactAsync(contactId);
 
