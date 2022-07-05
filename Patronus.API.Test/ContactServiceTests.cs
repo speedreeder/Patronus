@@ -1,5 +1,6 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using FluentValidation;
 using Patronus.Api.Models;
 using Patronus.API.Services;
 using Patronus.DAL;
@@ -12,98 +13,6 @@ namespace Patronus.API.Test
 
     public class ContactServiceTests
     {
-        [Theory]
-        [AutoMoqInlineAutoData("goodemail@host", "test test", "5555555555", false)]
-        [AutoMoqInlineAutoData("goodemail@", "test test", "5555555555", true)]
-        [AutoMoqInlineAutoData("goodemail@host", "test test", "55aa5555bb5555", true)]
-        [AutoMoqInlineAutoData("goodemail@host", "", "5555555555", true)]
-        public async Task CreateContactAsync_ShouldValidateInput(
-            string email,
-            string name,
-            string phone,
-            bool resultHasErrorMessages,
-            ContactService sut)
-        {
-            var contactDto = new ContactDto
-            {
-                Email = email,
-                Name = name,
-                Phone = phone,
-                Line1 = "123 Sesame St",
-                Line2 = "APT 1",
-                State = "NY",
-                City = "Syracuse",
-                ZipCode = "13224"
-            };
-
-            var result = await sut.CreateContactAsync(contactDto);
-
-            result.Should().NotBeNull();
-            if (resultHasErrorMessages)
-            {
-                result.Messages.Should().NotBeNullOrEmpty();
-            }
-            else
-            {
-                result.Messages.Should().BeNullOrEmpty();
-            }
-        }
-
-        [Theory]
-        [AutoMoqInlineAutoData("goodemail@host", "test test", "5555555555", 1, false)]
-        [AutoMoqInlineAutoData("goodemail@", "test test", "5555555555", 1, true)]
-        [AutoMoqInlineAutoData("goodemail@host", "test test", "55aa5555bb5555", 1, true)]
-        [AutoMoqInlineAutoData("goodemail@host", "", "5555555555", 1, true)]
-        [AutoMoqInlineAutoData("goodemail@host", "", "5555555555", null, true)]
-        public async Task UpdateContactAsync_ShouldValidateInput(
-            string email,
-            string name,
-            string phone,
-            int? contractId,
-            bool resultHasErrorMessages,
-            [Frozen] PatronusContext patronusContext,
-            ContactService sut)
-        {
-            patronusContext.Add(new Contact
-            {
-                ContactId = 1,
-                Name = "a a",
-                Email = "newemail@test",
-                Phone = "4444444444",
-                Line1 = "123 Sesame St",
-                Line2 = "APT 1",
-                State = "NY",
-                City = "Syracuse",
-                ZipCode = "13224"
-            });
-            patronusContext.SaveChanges();
-
-            var contactDto = new ContactDto
-            {
-                ContactId = contractId,
-                Email = email,
-                Name = name,
-                Phone = phone,
-                Line1 = "123 Sesame St",
-                Line2 = "APT 1",
-                State = "NY",
-                City = "Syracuse",
-                ZipCode = "13224"
-            };
-
-            var result = await sut.UpdateContactAsync(contactDto);
-
-            result.Should().NotBeNull();
-            if (resultHasErrorMessages)
-            {
-                result.Messages.Should().NotBeNullOrEmpty();
-            }
-            else
-            {
-                result.Messages.Should().BeNullOrEmpty();
-            }
-        }
-
         [Theory, AutoMoqData]
         public async Task CreateContactAsync_ShouldAddToContext(
             [Frozen]PatronusContext patronusContext,

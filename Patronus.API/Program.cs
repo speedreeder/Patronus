@@ -1,8 +1,8 @@
 using Patronus.DAL;
 using Microsoft.EntityFrameworkCore;
 using Patronus.API.Services;
-using FluentValidation.AspNetCore;
 using Patronus.Api.Models.Validators;
+using FluentValidation;
 
 namespace Patronus.Server
 {
@@ -22,11 +22,8 @@ namespace Patronus.Server
 
 
             builder.Services.AddScoped<IContactService, ContactService>();
-            builder.Services.AddControllers().AddFluentValidation(s =>
-            {
-                s.RegisterValidatorsFromAssemblyContaining<ContactDtoValidator>();
-            });
-
+            builder.Services.AddControllers();
+            builder.Services.AddValidatorsFromAssemblyContaining<ContactDtoValidator>();
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
