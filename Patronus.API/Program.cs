@@ -12,13 +12,10 @@ namespace Patronus.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            //builder.Services.AddAuthorization();
-
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<PatronusContext>(options =>
-             options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=PatronusContext;Trusted_Connection=True;MultipleActiveResultSets=true"));
+             options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=PatronusContext1;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
 
             builder.Services.AddScoped<IContactService, ContactService>();
