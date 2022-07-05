@@ -15,8 +15,8 @@ A test project integrating a number of interesting frameworks and methodologies:
   - Fluent Assertions https://fluentassertions.com/
   - EF In-Memory DB
   
- ## Installation
- Required tools:
+## Installation
+Required tools:
  - Visual Studio 2022 w/ASP.NET workload
  
 1. Clone the repository from Github.
