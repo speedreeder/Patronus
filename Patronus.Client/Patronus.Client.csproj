@@ -26,9 +26,7 @@
 		This allows you to deploy each of those as separate services/sites, which means they can be updated separately.
 		No need to bring down all of them to update one of them.
 		-->
-		<PackageReference Include="Patronus.API.Client" Version="1.1.5" />
+		<PackageReference Include="Patronus.API.Client" Version="1.1.6" />
 	</ItemGroup>
 
-
-	
 </Project>

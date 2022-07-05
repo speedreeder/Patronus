@@ -37,7 +37,7 @@ namespace Patronus.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<PagedSearchResult<ContactDto>>> UpdateContactAsync(ContactDto contactDto)
+        public async Task<ActionResult<ContactDto>> UpdateContactAsync(ContactDto contactDto)
         {
             if (!contactDto.ContactId.HasValue || contactDto.ContactId == 0)
             {

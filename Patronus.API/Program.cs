@@ -15,7 +15,7 @@ namespace Patronus.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<PatronusContext>(options =>
-             options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=PatronusContext1;Trusted_Connection=True;MultipleActiveResultSets=true"));
+             options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=PatronusContext;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
 
             builder.Services.AddScoped<IContactService, ContactService>();
