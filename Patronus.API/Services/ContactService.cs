@@ -124,37 +124,6 @@ namespace Patronus.API.Services
             return results;
         }
 
-        private List<string> ValidateContact(ContactDto contactDto)
-        {
-            var errorMessages = new List<string>();
-            if (!string.IsNullOrWhiteSpace(contactDto.Phone))
-            {
-                //source: https://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
-                if (!Regex.IsMatch(contactDto.Phone, @"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$")) errorMessages.Add($"Phone number {contactDto.Phone} is not properly formatted.");
-            }
-
-            if (!string.IsNullOrWhiteSpace(contactDto.Email))
-            {
-                // cheaper than regex? Not sure.
-                try
-                {
-                    var email = new MailAddress(contactDto.Email);
-                }
-                catch (FormatException)
-                {
-                    errorMessages.Add($"Email address {contactDto.Email} is not properly formatted.");
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(contactDto.Name))
-            {
-                errorMessages.Add("Name is required.");
-            }
-
-            return errorMessages;
-        }
-
-
         // I know there are libraries for these sort of POCO mappings (AutoMapper, etc)
         // but I've always prefered to do it by hand when possible.
         // More control at the cost of time spent.
