@@ -30,8 +30,21 @@ Required tools:
 
 ## Operation
 The Blazor WebAssembly app displays a table with three pre-populated Contacts. The table lists the Name, Email and Phone of the Contacts.
-The buttons at the bottom of the table refresh the data, and allow the user to add another Contact.
 Clicking on a row in the table pops up a dialog that allows the user to edit that contact, or delete it.
+
+![image](https://user-images.githubusercontent.com/842330/177233125-39af9ede-ae8d-4f4a-9585-68a1e9dcb416.png)
+
+![image](https://user-images.githubusercontent.com/842330/177233140-b741d731-6f79-4309-9698-0ce2c4a077f1.png)
+
+The buttons at the bottom of the table refresh the data, and allow the user to add another Contact.
+
+![image](https://user-images.githubusercontent.com/842330/177233172-507fe004-5fb7-4a93-8d1a-6d6ea98be448.png)
+
+
+The Patronus.API project also launches its own browser window, displaying a Swagger testing page for quick experiments with each REST API end point.
+
+![image](https://user-images.githubusercontent.com/842330/177233111-82c88c51-a954-44e1-9dc5-f668ede4b918.png)
+
 
 ## Explanations
 ### Refit Package Pattern
